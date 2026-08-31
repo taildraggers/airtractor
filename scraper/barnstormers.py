@@ -94,12 +94,29 @@ _BRAND_RE = re.compile(r"\bair[\s-]?tractor\b", re.IGNORECASE)
 # spaces.
 _MODEL_CODE_RE = re.compile(r"\bat[\s-]?(\d{3})[\s-]?([a-z]{0,2})\b", re.IGNORECASE)
 
+# Sellers often drop the "AT-" prefix entirely when "Air Tractor" is
+# already stated elsewhere in the title (e.g. "1997 Air Tractor 401B"
+# rather than "1997 Air Tractor AT-401B") - confirmed live, where this
+# lost 2 of 3 listings' model numbers before being added. Restricted to
+# the actual factory model numbers (not any 3-digit number) since this
+# branch isn't anchored to "AT", and only reached after _BRAND_RE has
+# already confirmed "Air Tractor" is in the title.
+_BARE_MODEL_NUMBER_RE = re.compile(
+    r"\b(300|301|302|400|401|402|501|502|503|602|802)[\s-]?([a-z]{0,2})\b",
+    re.IGNORECASE,
+)
+
 
 def _extract_model(title: str) -> tuple[str, str] | None:
     if not _BRAND_RE.search(title):
         return None
 
     match = _MODEL_CODE_RE.search(title)
+    if match:
+        number, suffix = match.groups()
+        return MAKE, f"AT-{number}{suffix.upper()}"
+
+    match = _BARE_MODEL_NUMBER_RE.search(title)
     if match:
         number, suffix = match.groups()
         return MAKE, f"AT-{number}{suffix.upper()}"
