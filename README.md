@@ -153,3 +153,12 @@ This writes/overwrites `docs/index.html`.
   (`category-16015-Agricultural--Air-Tractor.html`). If listings turn out
   to be split across additional categories, add more URLs to
   `CATEGORY_URLS` in `scraper/barnstormers.py`.
+
+
+## On taildraggers.com (theme v4)
+
+Each run also writes `docs/listings.json`: the same listings, title, disclaimer and
+"Search more" buttons as `docs/index.html`, as data. The taildraggers.com child theme
+(v4+) reads it and shows the listings natively on the matching page, so the
+`<iframe>` is no longer needed (any iframe still pointing here is swapped for the
+native list automatically). `docs/index.html` is still produced exactly as before.
